@@ -1,6 +1,12 @@
 aldryn-sites
 ============
 
+.. image:: https://travis-ci.org/aldryn/aldryn-sites.svg?branch=develop
+    :target: https://travis-ci.org/aldryn/aldryn-sites
+
+.. image:: https://img.shields.io/coveralls/aldryn/aldryn-sites.svg
+  :target: https://coveralls.io/r/aldryn/aldryn-sites
+
 Extensions to django.contrib.sites.
 
 Features
