@@ -49,6 +49,7 @@ TODOS
 
 * validate settings
 * test settings validators
+* log warning if there are Sites in the database that are not in the settings
 * pretty display of how redirects will work (in admin and as a simple util)
 * regex support for aliases
 * form to test redirect logic
