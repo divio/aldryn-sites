@@ -22,12 +22,14 @@ Features
 Installation
 ------------
 
-add ``aldryn_sites`` to ``INSTALLED_APPS``.
-add ``aldryn_sites.middleware.SiteMiddleware`` to ``MIDDLEWARE_CLASSES``
-(place it **before** ``djangosecure.middleware.SecurityMiddleware`` if redirects should be smart about alias domains
-possibly not having a valid certificate of their own. The middleware will pick up on ``SECURE_SSL_REDIRECT`` from
-``django-secure``.)
 
+* add ``aldryn_sites`` to ``INSTALLED_APPS``.
+
+* add ``aldryn_sites.middleware.SiteMiddleware`` to ``MIDDLEWARE_CLASSES``
+  (place it **before** ``djangosecure.middleware.SecurityMiddleware`` if redirects should be smart about alias domains
+  possibly not having a valid certificate of their own. The middleware will pick up on ``SECURE_SSL_REDIRECT`` from
+  ``django-secure``.)
+  
 configure ``ALDRYN_SITES_DOMAINS``::
 
     ALDRYN_SITES_DOMAINS = {
