@@ -22,21 +22,19 @@ add ``aldryn_sites.middleware.SiteMiddleware`` to ``MIDDLEWARE_CLASSES``
 possibly not having a valid certificate of their own. The middleware will pick up on ``SECURE_SSL_REDIRECT`` from
 ``django-secure``.)
 
-configure ``ALDRYN_SITES_DOMAINS``:
+configure ``ALDRYN_SITES_DOMAINS``::
 
-```
-ALDRYN_SITES_DOMAINS = {
-    1: {  # matches SITE_ID
-        'domain': 'www.example.com',  # main domain that all the aliases will redirect to.
-                                      # Auto populates ``django.contrib.sites.Site.domain``
-        'aliases': [          # these domains will be redirected to the main domain.
-            'example.com',    # add ``'*'`` to redirect all non-main domains to the main one.
-            'example.ch',
-            'www.example.ch',
-        ]
+    ALDRYN_SITES_DOMAINS = {
+        1: {  # matches SITE_ID
+            'domain': 'www.example.com',  # main domain that all the aliases will redirect to.
+                                          # Auto populates ``django.contrib.sites.Site.domain``
+            'aliases': [          # these domains will be redirected to the main domain.
+                'example.com',    # add ``'*'`` to redirect all non-main domains to the main one.
+                'example.ch',
+                'www.example.ch',
+            ]
+        }
     }
-}
-```
 
 
 Further Settings
