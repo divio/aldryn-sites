@@ -23,7 +23,7 @@ class SiteMiddleware(object):
         utils.set_site_names()
 
     def process_request(self, request):
-        if not self.site_id in self.domains.keys():
+        if self.site_id not in self.domains.keys():
             return
 
         current_url = '{}://{}{}'.format(

@@ -18,25 +18,23 @@ Installation
 
 add ``aldryn_sites`` to ``INSTALLED_APPS``.
 add ``aldryn_sites.middleware.SiteMiddleware`` to ``MIDDLEWARE_CLASSES``
-(place it **before ``djangosecure.middleware.SecurityMiddleware`` if redirects should be smart about alias domains
+(place it **before** ``djangosecure.middleware.SecurityMiddleware`` if redirects should be smart about alias domains
 possibly not having a valid certificate of their own. The middleware will pick up on ``SECURE_SSL_REDIRECT`` from
 ``django-secure``.)
 
-configure ``ALDRYN_SITES_DOMAINS``:
+configure ``ALDRYN_SITES_DOMAINS``::
 
-```python
-ALDRYN_SITES_DOMAINS = {
-    1: {  # matches SITE_ID
-        'domain': 'www.example.com',  # main domain that all the aliases will redirect to.
-                                      # Auto populates ``django.contrib.sites.Site.domain``
-        'aliases': [          # these domains will be redirected to the main domain.
-            'example.com',    # add ``'*'`` to redirect all non-main domains to the main one.
-            'example.ch',
-            'www.example.ch',
-        ]
+    ALDRYN_SITES_DOMAINS = {
+        1: {  # matches SITE_ID
+            'domain': 'www.example.com',  # main domain that all the aliases will redirect to.
+                                          # Auto populates ``django.contrib.sites.Site.domain``
+            'aliases': [          # these domains will be redirected to the main domain.
+                'example.com',    # add ``'*'`` to redirect all non-main domains to the main one.
+                'example.ch',
+                'www.example.ch',
+            ]
+        }
     }
-}
-```
 
 
 Further Settings
@@ -51,6 +49,7 @@ TODOS
 
 * validate settings
 * test settings validators
+* log warning if there are Sites in the database that are not in the settings
 * pretty display of how redirects will work (in admin and as a simple util)
 * regex support for aliases
 * form to test redirect logic
