@@ -9,4 +9,3 @@ class AldrynSitesConf(AppConf):
     SET_DOMAIN_NAME = True
 
     # TODO: validate settings
-

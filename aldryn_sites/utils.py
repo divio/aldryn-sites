@@ -5,8 +5,9 @@ from django.contrib.sites.models import Site
 import yurl
 
 
-_has_set_site_names = False  # global variable so we don't do this too often.
-                             # I wish there were an "application ready" signal.
+# global variable so we don't do this too often.
+# I wish there were an "application ready" signal.
+_has_set_site_names = False
 
 
 def set_site_names(force=False):
@@ -17,7 +18,7 @@ def set_site_names(force=False):
     _has_set_site_names = True
     sites = {site.id: site for site in Site.objects.all()}
     for site_id, site_config in settings.ALDRYN_SITES_DOMAINS.items():
-        if not site_id in sites.keys():
+        if site_id not in sites.keys():
             sites[site_id] = Site.objects.create(id=site_id)
         site = sites[site_id]
         if not site.name == site_config['domain']:
