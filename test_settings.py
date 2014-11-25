@@ -10,8 +10,11 @@ HELPER_SETTINGS = {
         1: {
             'domain': 'www.example.com',
             'aliases': [
+                'an.other.domain.com'
+            ],
+            'redirects': [
                 'example.com',
-            ]
+            ],
         }
     }
 }

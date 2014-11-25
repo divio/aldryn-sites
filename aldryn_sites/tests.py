@@ -9,6 +9,9 @@ class AldrynSitesTestCase(TestCase):
         config = {
             'domain': 'www.default.com',
             'aliases': [
+                'an.other.domain.com',
+            ],
+            'redirects': [
                 'default.com',
                 'default.io',
                 'www.default.io',
@@ -21,6 +24,15 @@ class AldrynSitesTestCase(TestCase):
             ('http://default.com/something/', 'http://www.default.com/something/'),
             ('http://default.io', 'http://www.default.com'),
             ('http://www.default.io/', 'http://www.default.com/'),
+            ('http://an.other.domain.com/', None),
+
+            ('https://www.default.com', 'http://www.default.com'),
+            ('https://www.default.com/something/', 'http://www.default.com/something/'),
+            ('https://default.com/', 'http://www.default.com/'),
+            ('https://default.com/something/', 'http://www.default.com/something/'),
+            ('https://default.io', 'http://www.default.com'),
+            ('https://www.default.io/', 'http://www.default.com/'),
+            ('https://an.other.domain.com/', 'http://an.other.domain.com/'),
         ]
         for src, dst in expected_redirects:
             self.assertEqual(dst, utils.get_redirect_url(src, config=config, https=False))
@@ -29,6 +41,9 @@ class AldrynSitesTestCase(TestCase):
         config = {
             'domain': 'www.default.com',
             'aliases': [
+                'an.other.domain.com',
+            ],
+            'redirects': [
                 'default.com',
                 'default.io',
                 'www.default.io',
@@ -52,6 +67,10 @@ class AldrynSitesTestCase(TestCase):
 
             ('https://www.default.io/', 'https://www.default.com/'),
             ('http://www.default.io/', 'https://www.default.com/'),
+
+            ('https://an.other.domain.com/', None),
+            ('http://an.other.domain.com/', 'https://an.other.domain.com/'),
+
         ]
         for src, dst in expected_redirects:
             self.assertEqual(dst, utils.get_redirect_url(src, config=config, https=True))
