@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 
-__version__ = '0.2'
+__version__ = '0.3'
 __author__ = 'Stefan Foulis'
 __license__ = 'BSD'
 __copyright__ = "Copyright 2014, Divio Aldryn Ltd"
