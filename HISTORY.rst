@@ -2,6 +2,7 @@ next
 ----
 
 * auto configuration of ALLOWED_HOSTS
+* regex domain matching support
 
 
 0.3 (2014-11-25)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+import re
 from django.conf import settings
 from django.contrib.sites.models import Site
 import yurl
@@ -28,6 +29,8 @@ def set_site_names(force=False):
 
 def get_redirect_url(current_url, config, https=False):
     """
+    priorities are (primary domain and aliases are treated the same):
+        exact redirect match > exact alias match > pattern redirect match > pattern alias match
     :param current_url: the url that is being called
     :param config: redirect configuration for this url
     :param want_https: whether redircts should go to https
@@ -37,16 +40,34 @@ def get_redirect_url(current_url, config, https=False):
     domains = set(config.get('aliases', [])) | set((primary_domain,))
     redirect_domains = set(config.get('redirects', []))
     url = yurl.URL(current_url)
-    target_proto = 'https' if https else 'http'
+    target_scheme = 'https' if https else 'http'
     redirect_url = None
-    if url.host in domains and url.scheme == target_proto:
-        return
     if url.is_host_ip() or url.is_host_ipv4():
+        # don't redirect for ips
         return
-    if url.host in domains and url.scheme != target_proto:
-        redirect_url = url.replace(scheme=target_proto)
-    elif '*' in redirect_domains or url.host in redirect_domains:
-        redirect_url = url.replace(scheme=target_proto, host=primary_domain)
+    if url.host in domains and url.scheme == target_scheme:
+        # exact host and scheme match: Nothing to do
+        return
+    if url.host in domains and url.scheme != target_scheme:
+        # exact alias match, but scheme mismatch: redirect to change scheme
+        redirect_url = url.replace(scheme=target_scheme)
+    elif url.host in redirect_domains:
+        # exact redirect match: redirect
+        redirect_url = url.replace(scheme=target_scheme, host=primary_domain)
+    elif url.host in domains:
+        # exact alias match: nothing to do
+        return
+    elif match_any(redirect_domains, url.host):
+        # pattern redirect match: redirect
+        redirect_url = url.replace(scheme=target_scheme, host=primary_domain)
+    elif match_any(domains, url.host):
+        # pattern alias match
+        if url.scheme != target_scheme:
+            # pattern alias match and scheme mismatch: redirect
+            redirect_url = url.replace(scheme=target_scheme)
+        else:
+            return
+
     if redirect_url:
         return '{}'.format(redirect_url)
 
@@ -60,3 +81,10 @@ def get_all_domains(config):
         for domain in site.get('redirects', []):
             domains.append(domain)
     return domains
+
+
+def match_any(patterns, string):
+    for pattern in patterns:
+        if hasattr(pattern, 'match') and pattern.match(string):
+            return True
+    return False
