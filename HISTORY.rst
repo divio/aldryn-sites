@@ -1,3 +1,9 @@
+next
+----
+
+* auto configuration of ALLOWED_HOSTS
+
+
 0.3 (2014-11-25)
 ----------------
 

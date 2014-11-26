@@ -49,3 +49,14 @@ def get_redirect_url(current_url, config, https=False):
         redirect_url = url.replace(scheme=target_proto, host=primary_domain)
     if redirect_url:
         return '{}'.format(redirect_url)
+
+
+def get_all_domains(config):
+    domains = []
+    for site in config.values():
+        domains.append(site['domain'])
+        for domain in site.get('aliases', []):
+            domains.append(domain)
+        for domain in site.get('redirects', []):
+            domains.append(domain)
+    return domains

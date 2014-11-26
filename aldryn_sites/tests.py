@@ -74,3 +74,8 @@ class AldrynSitesTestCase(TestCase):
         ]
         for src, dst in expected_redirects:
             self.assertEqual(dst, utils.get_redirect_url(src, config=config, https=True))
+
+    def test_auto_configure_allowed_hosts(self):
+        from django.conf import settings
+        for domain in ['www.example.com', 'example.com', 'an.other.domain.com']:
+            self.assertTrue(domain in settings.ALLOWED_HOSTS, '{} not in ALLOWED_HOSTS'.format(domain))
