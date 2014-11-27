@@ -88,16 +88,16 @@ class AldrynSitesTestCase(TestCase):
             'aliases': [
                 'an.other.domain.com',
                 'exact.default.io',
-                re.compile(r'^[a-z0-9-]+\.default\.com$'),
-                re.compile(r'^[a-z0-9-]+\.default\.me$'),
+                r'^[a-z0-9-]+\.default\.com$',
+                r'^[a-z0-9-]+\.default\.me$',
             ],
             'redirects': [
                 'default.com',
                 'default.io',
                 'exact.default.me',
                 'www.default.io',
-                re.compile('^[a-z0-9-]+\.default\.com$'),
-                re.compile(r'^[a-z0-9-]+\.default\.io$'),
+                r'^[a-z0-9-]+\.default\.com$',
+                re.compile(r'^[a-z0-9-]+\.default\.io$'),  # it's possible to put a pre-compiled regex here
             ]
         }
         expected_redirects = [

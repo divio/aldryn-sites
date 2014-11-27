@@ -38,7 +38,9 @@ def get_redirect_url(current_url, config, https=False):
     """
     primary_domain = config['domain']
     domains = set(config.get('aliases', [])) | set((primary_domain,))
+    domain_patterns = compile_regexes(domains)
     redirect_domains = set(config.get('redirects', []))
+    redirect_domain_patterns = compile_regexes(redirect_domains)
     url = yurl.URL(current_url)
     target_scheme = 'https' if https else 'http'
     redirect_url = None
@@ -57,10 +59,10 @@ def get_redirect_url(current_url, config, https=False):
     elif url.host in domains:
         # exact alias match: nothing to do
         return
-    elif match_any(redirect_domains, url.host):
+    elif match_any(redirect_domain_patterns, url.host):
         # pattern redirect match: redirect
         redirect_url = url.replace(scheme=target_scheme, host=primary_domain)
-    elif match_any(domains, url.host):
+    elif match_any(domain_patterns, url.host):
         # pattern alias match
         if url.scheme != target_scheme:
             # pattern alias match and scheme mismatch: redirect
@@ -83,8 +85,21 @@ def get_all_domains(config):
     return domains
 
 
+def compile_regexes(pattern_strings):
+    return [
+        (re.compile(pattern_string) if not hasattr(pattern_string, 'match') else pattern_string)
+        for pattern_string in pattern_strings
+    ]
+
+
 def match_any(patterns, string):
     for pattern in patterns:
+        if pattern == string:
+            # not a regex, but an exact match
+            return True
+        if hasattr(pattern, 'pattern') and pattern.pattern == string:
+            # it's a regex, but the pattern matches 1-to-1 (no regex rules inside)
+            return True
         if hasattr(pattern, 'match') and pattern.match(string):
             return True
     return False

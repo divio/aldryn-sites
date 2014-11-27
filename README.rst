@@ -38,12 +38,13 @@ configure ``ALDRYN_SITES_DOMAINS``::
                                           # Auto populates ``django.contrib.sites.Site.domain``
             'aliases': [                  # these domains will be accessible like the main domain (no redirect).
                 'an.other.domain.com',
-                re.pattern(r'^[a-z0-9-]+\.anysub\.com$'),  # supports regexes
+                r'^[a-z0-9-]+\.anysub\.com$',  # regexes are supported
             ],
             'redirects': [                # these domains will be redirected to the main domain.
                 'example.com',            # add ``'*'`` to redirect all non-main domains to the main one.
                 'example.ch',
                 'www.example.ch',
+                r'^[a-z0-9-]+\.my-redirect-domain\.com$',  # regexes are supported
             ],
         }
     }
@@ -70,3 +71,4 @@ TODOS
 * pretty display of how redirects will work (in admin and as a simple util)
 * regex support for aliases
 * form to test redirect logic
+* pre-compile and cache regexes
