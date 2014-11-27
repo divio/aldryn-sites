@@ -1,5 +1,5 @@
-next
-----
+0.4 (2014-11-27)
+----------------
 
 * auto configuration of ALLOWED_HOSTS
 * regex domain matching support
