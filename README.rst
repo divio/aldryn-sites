@@ -45,6 +45,7 @@ configure ``ALDRYN_SITES_DOMAINS``::
                 'example.ch',
                 'www.example.ch',
                 r'^[a-z0-9-]+\.my-redirect-domain\.com$',  # regexes are supported
+                r'.*',  # matches any domain (Makes the above rules useless. It's just an example)
             ],
         }
     }
