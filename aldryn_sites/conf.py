@@ -13,8 +13,6 @@ class AldrynSitesConf(AppConf):
     # TODO: validate settings
 
     def configure(self):
-        print self.configured_data['AUTO_CONFIGURE_ALLOWED_HOSTS']
-        print self.configured_data['DOMAINS']
         if self.configured_data['AUTO_CONFIGURE_ALLOWED_HOSTS'] and self.configured_data['DOMAINS']:
             s = self._meta.holder
             ALLOWED_HOSTS = s.ALLOWED_HOSTS
