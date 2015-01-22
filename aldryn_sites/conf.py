@@ -23,5 +23,4 @@ class AldrynSitesConf(AppConf):
                 if domain not in ALLOWED_HOSTS:
                     ALLOWED_HOSTS.append(domain)
             s.ALLOWED_HOSTS = ah_type(ALLOWED_HOSTS)
-            print s.ALLOWED_HOSTS
         return self.configured_data
