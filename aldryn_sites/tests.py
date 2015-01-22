@@ -142,3 +142,43 @@ class AldrynSitesTestCase(TestCase):
         from django.conf import settings
         for domain in ['www.example.com', 'example.com', 'an.other.domain.com']:
             self.assertTrue(domain in settings.ALLOWED_HOSTS, '{} not in ALLOWED_HOSTS'.format(domain))
+
+    def test_auto_configure_site_domain(self):
+        from django.contrib.sites.models import Site
+        Site.objects.all().delete()
+        Site.objects.create(name='Acme Ltd', domain='acme.com')
+        utils.set_site_names(force=True)
+        s = Site.objects.get()
+        self.assertTrue(s.name == 'Acme Ltd', 'site name has changed')
+        self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
+
+    def test_auto_configure_site_domain_and_name_if_same(self):
+        from django.contrib.sites.models import Site
+        Site.objects.all().delete()
+        Site.objects.create(name='acme.com', domain='acme.com')
+        utils.set_site_names(force=True)
+        s = Site.objects.get()
+        self.assertTrue(s.name == 'www.example.com', 'site name was not set')
+        self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
+
+    def test_auto_configure_adds_new_sites(self):
+        from django.contrib.sites.models import Site
+        Site.objects.all().delete()
+        utils.set_site_names(force=True)
+        s = Site.objects.get()
+        self.assertTrue(s.name == 'www.example.com', 'site name was not set')
+        self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
+
+    def test_auto_configure_adds_multiple_new_sites_with_one_existing(self):
+        from django.contrib.sites.models import Site
+        with self.settings(ALDRYN_SITES_DOMAINS={
+                1: {'domain': 'www.example.com'},
+                2: {'domain': 'www.other.com'},
+                }):
+            utils.set_site_names(force=True)
+            s = Site.objects.get(id=1)
+            self.assertTrue(s.name == 'www.example.com', 'site name was not set')
+            self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
+            s = Site.objects.get(id=2)
+            self.assertTrue(s.name == 'www.other.com', 'site name was not set')
+            self.assertTrue(s.domain == 'www.other.com', 'site domain was not set')

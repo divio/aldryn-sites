@@ -20,9 +20,16 @@ def set_site_names(force=False):
     sites = {site.id: site for site in Site.objects.all()}
     for site_id, site_config in settings.ALDRYN_SITES_DOMAINS.items():
         if site_id not in sites.keys():
-            sites[site_id] = Site.objects.create(id=site_id)
+            sites[site_id] = Site.objects.create(
+                id=site_id,
+                name=site_config['domain'],
+                domain=site_config['domain'],
+            )
         site = sites[site_id]
         if not site.name == site_config['domain']:
+            if site.name == site.domain:
+                # currently name and domain are the same... so change both to the new value
+                site.name = site_config['domain']
             site.domain = site_config['domain']
             site.save()
 
