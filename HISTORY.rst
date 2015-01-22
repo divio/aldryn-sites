@@ -1,7 +1,14 @@
+next
+----
+
+* ...
+
+
 0.5 (2015-01-22)
 ----------------
 
 * auto configuration of Site.name if it matches Site.domain
+
 
 0.4 (2014-11-27)
 ----------------
