@@ -34,7 +34,7 @@ configure ``ALDRYN_SITES_DOMAINS``::
 
     ALDRYN_SITES_DOMAINS = {
         1: {  # matches SITE_ID
-            'domain': 'www.example.com',  # main domain that all the aliases will redirect to.
+            'domain': 'www.example.com',  # main domain that all domains in redirects will redirect to.
                                           # Auto populates ``django.contrib.sites.Site.domain``
             'aliases': [                  # these domains will be accessible like the main domain (no redirect).
                 'an.other.domain.com',
@@ -45,6 +45,7 @@ configure ``ALDRYN_SITES_DOMAINS``::
                 'example.ch',
                 'www.example.ch',
                 r'^[a-z0-9-]+\.my-redirect-domain\.com$',  # regexes are supported
+                r'.*',  # matches any domain (Makes the above rules useless. It's just an example)
             ],
         }
     }
