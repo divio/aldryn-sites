@@ -24,7 +24,7 @@ setup(
         'YURL>=0.13',
         'django-appconf',
     ),
-    classifiers = [
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Django',
         'Intended Audience :: Developers',
