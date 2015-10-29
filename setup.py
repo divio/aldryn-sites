@@ -20,7 +20,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=(
-        'Django>=1.5,<1.8',
+        'Django>=1.5,<1.7',
         'YURL>=0.13',
         'django-appconf',
     ),
@@ -32,7 +32,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
     ],
 )
