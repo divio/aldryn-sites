@@ -1,7 +1,7 @@
 next
 ----
 
-* ...
+* add Django 1.5 support
 
 
 0.5 (2015-01-22)
