@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 from django.conf import settings
-from django.http import HttpResponsePermanentRedirect
+from django.http import HttpResponseRedirect
 from . import utils
 
 
@@ -34,4 +34,4 @@ class SiteMiddleware(object):
         redirect_url = utils.get_redirect_url(current_url,
                                               config=site_config, https=self.secure_redirect)
         if redirect_url:
-            return HttpResponsePermanentRedirect(redirect_url)
+            return HttpResponseRedirect(redirect_url)
