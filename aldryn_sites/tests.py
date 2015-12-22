@@ -144,18 +144,25 @@ class AldrynSitesTestCase(TestCase):
             self.assertTrue(domain in settings.ALLOWED_HOSTS, '{} not in ALLOWED_HOSTS'.format(domain))
 
     def test_auto_configure_site_domain(self):
+        from django.conf import settings
         from django.contrib.sites.models import Site
         Site.objects.all().delete()
-        Site.objects.create(name='Acme Ltd', domain='acme.com')
+        # Django 1.7 has default site created with a signal after initial
+        # migration is run. We delete it in the previous step, if it exists,
+        # and want to reuse specific PK from settings.
+        pk = settings.ALDRYN_SITES_DOMAINS.keys()[0]
+        Site.objects.create(pk=pk, name='Acme Ltd', domain='acme.com')
         utils.set_site_names(force=True)
         s = Site.objects.get()
         self.assertTrue(s.name == 'Acme Ltd', 'site name has changed')
         self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
 
     def test_auto_configure_site_domain_and_name_if_same(self):
+        from django.conf import settings
         from django.contrib.sites.models import Site
         Site.objects.all().delete()
-        Site.objects.create(name='acme.com', domain='acme.com')
+        pk = settings.ALDRYN_SITES_DOMAINS.keys()[0]
+        Site.objects.create(pk=pk, name='acme.com', domain='acme.com')
         utils.set_site_names(force=True)
         s = Site.objects.get()
         self.assertTrue(s.name == 'www.example.com', 'site name was not set')
