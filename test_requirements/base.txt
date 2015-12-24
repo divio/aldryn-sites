@@ -1,5 +1,3 @@
 pysqlite
 pytz
 coverage
-# the version that works with all supported Django versions
-django-cms==3.0.15
