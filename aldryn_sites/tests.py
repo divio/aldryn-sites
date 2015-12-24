@@ -7,6 +7,7 @@ from django.test import TestCase
 
 from . import utils
 
+
 class AldrynSitesTestCase(TestCase):
     def test_http_redirect_url(self):
         config = {
