@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
-from django.conf import settings
+from django.conf import settings  # NOQA required so settings get initialised
 from appconf import AppConf
 from . import utils
 
