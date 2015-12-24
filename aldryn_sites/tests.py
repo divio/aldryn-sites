@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
-from . import utils
 import re
+from unittest import skipIf
+from django import VERSION as DJANGO_VERSION
 from django.test import TestCase
 
+from . import utils
 
 class AldrynSitesTestCase(TestCase):
     def test_http_redirect_url(self):
@@ -138,6 +140,8 @@ class AldrynSitesTestCase(TestCase):
                                  src, dst, utils.get_redirect_url(
                                      src, config=config, https=True)))
 
+    @skipIf(DJANGO_VERSION >= (1, 7),
+            "Does not work inside tests on this version")
     def test_auto_configure_allowed_hosts(self):
         from django.conf import settings
         for domain in ['www.example.com', 'example.com', 'an.other.domain.com']:
