@@ -184,9 +184,9 @@ class AldrynSitesTestCase(TestCase):
     def test_auto_configure_adds_multiple_new_sites_with_one_existing(self):
         from django.contrib.sites.models import Site
         with self.settings(ALDRYN_SITES_DOMAINS={
-                1: {'domain': 'www.example.com'},
-                2: {'domain': 'www.other.com'},
-                }):
+            1: {'domain': 'www.example.com'},
+            2: {'domain': 'www.other.com'},
+        }):
             utils.set_site_names(force=True)
             s = Site.objects.get(id=1)
             self.assertTrue(s.name == 'www.example.com', 'site name was not set')
