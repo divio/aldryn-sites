@@ -1,5 +1,5 @@
-next
-----
+0.5.2 (2015-12-31)
+------------------
 
 * fix tests to support Django 1.7, 1.8, 1.9
 * middleware: use 302 (temporary redirect), not 301 (permanent)
