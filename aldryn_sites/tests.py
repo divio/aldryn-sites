@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
-from . import utils
 import re
+from unittest import skipIf
+from django import VERSION as DJANGO_VERSION
 from django.test import TestCase
+
+from . import utils
 
 
 class AldrynSitesTestCase(TestCase):
@@ -138,24 +141,33 @@ class AldrynSitesTestCase(TestCase):
                                  src, dst, utils.get_redirect_url(
                                      src, config=config, https=True)))
 
+    @skipIf(DJANGO_VERSION >= (1, 7),
+            "Does not work inside tests on this version")
     def test_auto_configure_allowed_hosts(self):
         from django.conf import settings
         for domain in ['www.example.com', 'example.com', 'an.other.domain.com']:
             self.assertTrue(domain in settings.ALLOWED_HOSTS, '{} not in ALLOWED_HOSTS'.format(domain))
 
     def test_auto_configure_site_domain(self):
+        from django.conf import settings
         from django.contrib.sites.models import Site
         Site.objects.all().delete()
-        Site.objects.create(name='Acme Ltd', domain='acme.com')
+        # Django 1.7 has default site created with a signal after initial
+        # migration is run. We delete it in the previous step, if it exists,
+        # and want to reuse specific PK from settings.
+        pk = settings.ALDRYN_SITES_DOMAINS.keys()[0]
+        Site.objects.create(pk=pk, name='Acme Ltd', domain='acme.com')
         utils.set_site_names(force=True)
         s = Site.objects.get()
         self.assertTrue(s.name == 'Acme Ltd', 'site name has changed')
         self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
 
     def test_auto_configure_site_domain_and_name_if_same(self):
+        from django.conf import settings
         from django.contrib.sites.models import Site
         Site.objects.all().delete()
-        Site.objects.create(name='acme.com', domain='acme.com')
+        pk = settings.ALDRYN_SITES_DOMAINS.keys()[0]
+        Site.objects.create(pk=pk, name='acme.com', domain='acme.com')
         utils.set_site_names(force=True)
         s = Site.objects.get()
         self.assertTrue(s.name == 'www.example.com', 'site name was not set')
@@ -172,9 +184,9 @@ class AldrynSitesTestCase(TestCase):
     def test_auto_configure_adds_multiple_new_sites_with_one_existing(self):
         from django.contrib.sites.models import Site
         with self.settings(ALDRYN_SITES_DOMAINS={
-                1: {'domain': 'www.example.com'},
-                2: {'domain': 'www.other.com'},
-                }):
+            1: {'domain': 'www.example.com'},
+            2: {'domain': 'www.other.com'},
+        }):
             utils.set_site_names(force=True)
             s = Site.objects.get(id=1)
             self.assertTrue(s.name == 'www.example.com', 'site name was not set')

@@ -30,7 +30,7 @@ HELPER_SETTINGS = {
 
 def run():
     from djangocms_helper import runner
-    runner.cms('aldryn_sites')
+    runner.run('aldryn_sites')
 
 
 if __name__ == "__main__":
