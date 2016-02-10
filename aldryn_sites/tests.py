@@ -145,22 +145,8 @@ class AldrynSitesTestCase(TestCase):
             "Does not work inside tests on this version")
     def test_auto_configure_allowed_hosts(self):
         from django.conf import settings
-        for domain in ['www.example.com', 'example.com', 'an.other.domain.com']:
-            self.assertTrue(domain in settings.ALLOWED_HOSTS, '{} not in ALLOWED_HOSTS'.format(domain))
-
-    def test_auto_configure_site_domain(self):
-        from django.conf import settings
-        from django.contrib.sites.models import Site
-        Site.objects.all().delete()
-        # Django 1.7 has default site created with a signal after initial
-        # migration is run. We delete it in the previous step, if it exists,
-        # and want to reuse specific PK from settings.
-        pk = settings.ALDRYN_SITES_DOMAINS.keys()[0]
-        Site.objects.create(pk=pk, name='Acme Ltd', domain='acme.com')
-        utils.set_site_names(force=True)
-        s = Site.objects.get()
-        self.assertTrue(s.name == 'Acme Ltd', 'site name has changed')
-        self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
+        for domain in ['www.project.com', 'project.com', 'an.other.domain.com']:
+            self.assertIn(domain, settings.ALLOWED_HOSTS)
 
     def test_auto_configure_site_domain_and_name_if_same(self):
         from django.conf import settings
@@ -170,27 +156,198 @@ class AldrynSitesTestCase(TestCase):
         Site.objects.create(pk=pk, name='acme.com', domain='acme.com')
         utils.set_site_names(force=True)
         s = Site.objects.get()
-        self.assertTrue(s.name == 'www.example.com', 'site name was not set')
-        self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
+        self.assertEquals(s.name, 'My Project')
+        self.assertEquals(s.domain, 'www.project.com')
 
     def test_auto_configure_adds_new_sites(self):
         from django.contrib.sites.models import Site
         Site.objects.all().delete()
         utils.set_site_names(force=True)
         s = Site.objects.get()
-        self.assertTrue(s.name == 'www.example.com', 'site name was not set')
-        self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
+        self.assertEquals(s.name, 'My Project')
+        self.assertEquals(s.domain, 'www.project.com')
 
     def test_auto_configure_adds_multiple_new_sites_with_one_existing(self):
         from django.contrib.sites.models import Site
         with self.settings(ALDRYN_SITES_DOMAINS={
-            1: {'domain': 'www.example.com'},
-            2: {'domain': 'www.other.com'},
+            1: {'name': 'Site 1', 'domain': 'site1.com'},
+            2: {'name': 'Site 2', 'domain': 'site2.com'},
         }):
             utils.set_site_names(force=True)
             s = Site.objects.get(id=1)
-            self.assertTrue(s.name == 'www.example.com', 'site name was not set')
-            self.assertTrue(s.domain == 'www.example.com', 'site domain was not set')
+            self.assertEquals(s.name, 'Site 1')
+            self.assertEquals(s.domain, 'site1.com')
             s = Site.objects.get(id=2)
-            self.assertTrue(s.name == 'www.other.com', 'site name was not set')
-            self.assertTrue(s.domain == 'www.other.com', 'site domain was not set')
+            self.assertEquals(s.name, 'Site 2')
+            self.assertEquals(s.domain, 'site2.com')
+
+    def test_sitename(self):
+        from django.contrib.sites.models import Site
+        with self.settings(ALDRYN_SITES_DOMAINS={
+            1: {'domain': 'site1.com'},
+            2: {'name': 'Site 2', 'domain': 'site2.com'},
+        }):
+            utils.set_site_names(force=True)
+            s = Site.objects.get(id=1)
+            self.assertEquals(s.name, 'site1.com')
+            self.assertEquals(s.domain, 'site1.com')
+            s = Site.objects.get(id=2)
+            self.assertEquals(s.name, 'Site 2')
+            self.assertEquals(s.domain, 'site2.com')
+
+    def test_sitename_same_as_domain(self):
+        from django.contrib.sites.models import Site
+
+        site_1 = Site.objects.create(name='site1.com', domain='site1.com')
+        site_2 = Site.objects.create(name='site2.com', domain='site2.com')
+
+        with self.settings(ALDRYN_SITES_DOMAINS={
+            site_1.pk: {'domain': 'other-site1.com'},
+            site_2.pk: {'name': 'Other Site 2', 'domain': 'other-site2.com'},
+        }):
+            utils.set_site_names(force=True)
+            s = Site.objects.get(id=site_1.pk)
+            self.assertEquals(s.name, 'other-site1.com')
+            self.assertEquals(s.domain, 'other-site1.com')
+
+            s = Site.objects.get(id=site_2.pk)
+            self.assertEquals(s.name, 'Other Site 2')
+            self.assertEquals(s.domain, 'other-site2.com')
+
+    def test_sitename_different_than_domain(self):
+        from django.contrib.sites.models import Site
+
+        site_1 = Site.objects.create(name='Site 1', domain='site1.com')
+        site_2 = Site.objects.create(name='Site 2', domain='site2.com')
+
+        with self.settings(ALDRYN_SITES_DOMAINS={
+            site_1.pk: {'domain': 'other-site1.com'},
+            site_2.pk: {'name': 'Other Site 2', 'domain': 'other-site2.com'},
+        }):
+            utils.set_site_names(force=True)
+            s = Site.objects.get(id=site_1.pk)
+            self.assertEquals(s.name, 'Site 1')
+            self.assertEquals(s.domain, 'other-site1.com')
+
+            s = Site.objects.get(id=site_2.pk)
+            self.assertEquals(s.name, 'Other Site 2')
+            self.assertEquals(s.domain, 'other-site2.com')
+
+    def test_sitename_is_example_com(self):
+        from django.contrib.sites.models import Site
+
+        site_1 = Site.objects.create(name='example.com', domain='example1.com')
+        site_2 = Site.objects.create(name='example.com', domain='example2.com')
+
+        with self.settings(ALDRYN_SITES_DOMAINS={
+            site_1.pk: {'domain': 'other-site1.com'},
+            site_2.pk: {'name': 'Other Site 2', 'domain': 'other-site2.com'},
+        }):
+            utils.set_site_names(force=True)
+            s = Site.objects.get(id=site_1.pk)
+            self.assertEquals(s.name, 'other-site1.com')
+            self.assertEquals(s.domain, 'other-site1.com')
+
+            s = Site.objects.get(id=site_2.pk)
+            self.assertEquals(s.name, 'Other Site 2')
+            self.assertEquals(s.domain, 'other-site2.com')
+
+    def test_domain_unchanged_new_sitename_empty_domain_different(self):
+        """
+        New Domain == site.domain
+        New site.name: missing, '' or None
+        Existing site.name != site.domain
+        """
+        from django.contrib.sites.models import Site
+
+        site_1 = Site.objects.create(name='Site 1', domain='site1.com')
+        site_2 = Site.objects.create(name='Site 2', domain='site2.com')
+
+        with self.settings(ALDRYN_SITES_DOMAINS={
+            site_1.pk: {'name': '', 'domain': 'site1.com'},
+            site_2.pk: {'name': None, 'domain': 'site2.com'},
+        }):
+            utils.set_site_names(force=True)
+
+            s = Site.objects.get(id=site_1.pk)
+            self.assertEquals(s.name, 'Site 1')
+            self.assertEquals(s.domain, 'site1.com')
+
+            s = Site.objects.get(id=site_2.pk)
+            self.assertEquals(s.name, 'Site 2')
+            self.assertEquals(s.domain, 'site2.com')
+
+    def test_domain_unchanged_new_sitename_empty_domain_matches(self):
+        """
+        New Domain == site.domain
+        New site.name: missing, '' or None
+        site.name == site.domain
+        """
+        from django.contrib.sites.models import Site
+
+        site_1 = Site.objects.create(name='site1.com', domain='site1.com')
+        site_2 = Site.objects.create(name='site2.com', domain='site2.com')
+
+        with self.settings(ALDRYN_SITES_DOMAINS={
+            site_1.pk: {'name': '', 'domain': 'site1.com'},
+            site_2.pk: {'name': None, 'domain': 'site2.com'},
+        }):
+            utils.set_site_names(force=True)
+
+            s = Site.objects.get(id=site_1.pk)
+            self.assertEquals(s.name, 'site1.com')
+            self.assertEquals(s.domain, 'site1.com')
+
+            s = Site.objects.get(id=site_2.pk)
+            self.assertEquals(s.name, 'site2.com')
+            self.assertEquals(s.domain, 'site2.com')
+
+    def test_domain_changes_new_sitename_empty_domain_different(self):
+        """
+        New Domain != site.domain
+        New site.name: missing, '' or None
+        site.name != site.domain
+        """
+        from django.contrib.sites.models import Site
+
+        site_1 = Site.objects.create(name='Site 1', domain='site1.com')
+        site_2 = Site.objects.create(name='Site 2', domain='site2.com')
+
+        with self.settings(ALDRYN_SITES_DOMAINS={
+            site_1.pk: {'name': '', 'domain': 'other-site1.com'},
+            site_2.pk: {'name': None, 'domain': 'other-site2.com'},
+        }):
+            utils.set_site_names(force=True)
+
+            s = Site.objects.get(id=site_1.pk)
+            self.assertEquals(s.name, 'Site 1')
+            self.assertEquals(s.domain, 'other-site1.com')
+
+            s = Site.objects.get(id=site_2.pk)
+            self.assertEquals(s.name, 'Site 2')
+            self.assertEquals(s.domain, 'other-site2.com')
+
+    def test_domain_changes_new_sitename_empty_domain_matches(self):
+        """
+        New Domain != site.domain
+        New site.name: missing, '' or None
+        site.name == site.domain
+        """
+        from django.contrib.sites.models import Site
+
+        site_1 = Site.objects.create(name='site1.com', domain='site1.com')
+        site_2 = Site.objects.create(name='site2.com', domain='site2.com')
+
+        with self.settings(ALDRYN_SITES_DOMAINS={
+            site_1.pk: {'name': '', 'domain': 'other-site1.com'},
+            site_2.pk: {'name': None, 'domain': 'other-site2.com'},
+        }):
+            utils.set_site_names(force=True)
+
+            s = Site.objects.get(id=site_1.pk)
+            self.assertEquals(s.name, 'other-site1.com')
+            self.assertEquals(s.domain, 'other-site1.com')
+
+            s = Site.objects.get(id=site_2.pk)
+            self.assertEquals(s.name, 'other-site2.com')
+            self.assertEquals(s.domain, 'other-site2.com')

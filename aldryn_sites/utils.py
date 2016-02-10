@@ -19,19 +19,36 @@ def set_site_names(force=False):
     _has_set_site_names = True
     sites = {site.id: site for site in Site.objects.all()}
     for site_id, site_config in settings.ALDRYN_SITES_DOMAINS.items():
+        config_name = site_config.get('name', None)
+        config_domain = site_config['domain']
+
         if site_id not in sites.keys():
             sites[site_id] = Site.objects.create(
                 id=site_id,
-                name=site_config['domain'],
-                domain=site_config['domain'],
+                name=config_name or config_domain,
+                domain=config_domain,
             )
-        site = sites[site_id]
-        if not site.name == site_config['domain']:
-            if site.name == site.domain:
-                # currently name and domain are the same... so change both to the new value
-                site.name = site_config['domain']
-            site.domain = site_config['domain']
-            site.save()
+        else:
+            changed = False
+            site = sites[site_id]
+            if not site.domain == config_domain:
+                # domain needs to be updated
+                if not config_name and site.name in (site.domain, 'example.com'):
+                    # ``site.name`` is not explicitly configured:
+                    # a) site.name == site.domain: since we change the domain,
+                    #    we should also change the name
+                    # b) site.name == example.com: fresh database with
+                    #    django's default for site name/domain, change it
+                    site.name = config_domain
+                site.domain = config_domain
+                changed = True
+            if config_name:
+                # a new site name has explicitly been set, update it
+                site.name = config_name
+                changed = True
+
+            if changed:
+                site.save()
 
 
 def get_redirect_url(current_url, config, https=False):

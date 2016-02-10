@@ -16,12 +16,13 @@ HELPER_SETTINGS = {
     ],
     'ALDRYN_SITES_DOMAINS': {
         1: {
-            'domain': 'www.example.com',
+            'name': 'My Project',
+            'domain': 'www.project.com',
             'aliases': [
                 'an.other.domain.com'
             ],
             'redirects': [
-                'example.com',
+                'project.com',
             ],
         }
     },
