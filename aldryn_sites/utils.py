@@ -51,7 +51,7 @@ def set_site_names(force=False):
                 site.save()
 
 
-def get_redirect_url(current_url, config, https=False):
+def get_redirect_url(current_url, config, https=None):
     """
     priorities are (primary domain and aliases are treated the same):
         exact redirect match > exact alias match > pattern redirect match > pattern alias match
@@ -66,7 +66,10 @@ def get_redirect_url(current_url, config, https=False):
     redirect_domains = set(config.get('redirects', []))
     redirect_domain_patterns = compile_regexes(redirect_domains)
     url = yurl.URL(current_url)
-    target_scheme = 'https' if https else 'http'
+    if https is None:
+        target_scheme = url.scheme
+    else:
+        target_scheme = 'https' if https else 'http'
     redirect_url = None
     if url.is_host_ip() or url.is_host_ipv4():
         # don't redirect for ips

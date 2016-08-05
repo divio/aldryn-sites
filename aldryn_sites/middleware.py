@@ -17,7 +17,7 @@ class SiteMiddleware(object):
     """
     def __init__(self):
         self.domains = settings.ALDRYN_SITES_DOMAINS
-        self.secure_redirect = getattr(settings, 'SECURE_SSL_REDIRECT', False)
+        self.secure_redirect = getattr(settings, 'SECURE_SSL_REDIRECT', None)
         self.site_id = getattr(settings, 'SITE_ID', 1)
         utils.set_site_names()
 
