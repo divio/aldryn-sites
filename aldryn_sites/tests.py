@@ -22,27 +22,34 @@ class AldrynSitesTestCase(TestCase):
             ]
         }
         expected_redirects = [
-            ('http://www.default.com', None),
-            ('http://www.default.com/something/', None),
-            ('http://default.com/', 'http://www.default.com/'),
-            ('http://default.com/something/', 'http://www.default.com/something/'),
-            ('http://default.io', 'http://www.default.com'),
-            ('http://www.default.io/', 'http://www.default.com/'),
-            ('http://an.other.domain.com/', None),
-
             ('https://www.default.com', 'http://www.default.com'),
+            ('http://www.default.com', None),
+
             ('https://www.default.com/something/', 'http://www.default.com/something/'),
+            ('http://www.default.com/something/', None),
+
             ('https://default.com/', 'http://www.default.com/'),
+            ('http://default.com/', 'http://www.default.com/'),
+
             ('https://default.com/something/', 'http://www.default.com/something/'),
+            ('http://default.com/something/', 'http://www.default.com/something/'),
+
             ('https://default.io', 'http://www.default.com'),
+            ('http://default.io', 'http://www.default.com'),
+
             ('https://www.default.io/', 'http://www.default.com/'),
+            ('http://www.default.io/', 'http://www.default.com/'),
+
             ('https://an.other.domain.com/', 'http://an.other.domain.com/'),
+            ('http://an.other.domain.com/', None),
         ]
-        for src, dst in expected_redirects:
-            self.assertEqual(dst, utils.get_redirect_url(src, config=config, https=False),
-                             msg='expected {} -> {}. got {}'.format(
-                                 src, dst, utils.get_redirect_url(
-                                     src, config=config, https=True)))
+        for src, expected in expected_redirects:
+            redirected = utils.get_redirect_url(src, config=config, https=False)
+            self.assertEqual(
+                expected,
+                redirected,
+                msg='expected {} -> {}. got {}'.format(src, expected, redirected),
+            )
 
     def test_https_redirect_url(self):
         config = {
@@ -77,13 +84,57 @@ class AldrynSitesTestCase(TestCase):
 
             ('https://an.other.domain.com/', None),
             ('http://an.other.domain.com/', 'https://an.other.domain.com/'),
+        ]
+        for src, expected in expected_redirects:
+            redirected = utils.get_redirect_url(src, config=config, https=True)
+            self.assertEqual(
+                expected,
+                redirected,
+                msg='expected {} -> {}. got {}'.format(src, expected, redirected),
+            )
+
+    def test_no_scheme_redirect_url(self):
+        config = {
+            'domain': 'www.default.com',
+            'aliases': [
+                'an.other.domain.com',
+            ],
+            'redirects': [
+                'default.com',
+                'default.io',
+                'www.default.io',
+            ]
+        }
+        expected_redirects = [
+            ('https://www.default.com', None),
+            ('http://www.default.com', None),
+
+            ('https://www.default.com/something/', None),
+            ('http://www.default.com/something/', None),
+
+            ('https://default.com/', 'https://www.default.com/'),
+            ('http://default.com/', 'http://www.default.com/'),
+
+            ('https://default.com/something/', 'https://www.default.com/something/'),
+            ('http://default.com/something/', 'http://www.default.com/something/'),
+
+            ('https://default.io', 'https://www.default.com'),
+            ('http://default.io', 'http://www.default.com'),
+
+            ('https://www.default.io/', 'https://www.default.com/'),
+            ('http://www.default.io/', 'http://www.default.com/'),
+
+            ('https://an.other.domain.com/', None),
+            ('http://an.other.domain.com/', None),
 
         ]
-        for src, dst in expected_redirects:
-            self.assertEqual(dst, utils.get_redirect_url(src, config=config, https=True),
-                             msg='expected {} -> {}. got {}'.format(
-                                 src, dst, utils.get_redirect_url(
-                                     src, config=config, https=True)))
+        for src, expected in expected_redirects:
+            redirected = utils.get_redirect_url(src, config=config, https=None)
+            self.assertEqual(
+                expected,
+                redirected,
+                msg='expected {} -> {}. got {}'.format(src, expected, redirected),
+            )
 
     def test_https_pattern_priority_matches(self):
         config = {
@@ -135,11 +186,13 @@ class AldrynSitesTestCase(TestCase):
             # exact redirect should win over alias pattern
             ('https://exact.default.me', 'https://www.default.com'),
         ]
-        for src, dst in expected_redirects:
-            self.assertEqual(dst, utils.get_redirect_url(src, config=config, https=True),
-                             msg='expected {} -> {}. got {}'.format(
-                                 src, dst, utils.get_redirect_url(
-                                     src, config=config, https=True)))
+        for src, expected in expected_redirects:
+            redirected = utils.get_redirect_url(src, config=config, https=True)
+            self.assertEqual(
+                expected,
+                redirected,
+                msg='expected {} -> {}. got {}'.format(src, expected, redirected),
+            )
 
     @skipIf(DJANGO_VERSION >= (1, 7),
             "Does not work inside tests on this version")
