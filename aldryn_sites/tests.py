@@ -94,7 +94,7 @@ class AldrynSitesTestCase(TestCase):
             if expected is None:
                 self.assertIsNone(response)
             else:
-                self.assertUrlEquals(src, expected, response.url)
+                self.assertUrlEquals(src, expected, response['Location'])
 
     def test_https_redirect_url(self):
         config = {
@@ -145,7 +145,7 @@ class AldrynSitesTestCase(TestCase):
             if expected is None:
                 self.assertIsNone(response)
             else:
-                self.assertUrlEquals(src, expected, response.url)
+                self.assertUrlEquals(src, expected, response['Location'])
 
     def test_no_scheme_redirect_url(self):
         config = {
@@ -196,7 +196,7 @@ class AldrynSitesTestCase(TestCase):
             if expected is None:
                 self.assertIsNone(response)
             else:
-                self.assertUrlEquals(src, expected, response.url)
+                self.assertUrlEquals(src, expected, response['Location'])
 
     def test_https_pattern_priority_matches(self):
         config = {
