@@ -1,3 +1,10 @@
+0.5.4 (2016-08-06)
+------------------
+
+* do not redirect from https to http if `SECURE_SSL_REDIRECT` is not
+  explicitly set to `False`
+
+
 0.5.2 (2015-12-31)
 ------------------
 
