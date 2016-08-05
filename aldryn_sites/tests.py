@@ -28,7 +28,7 @@ class AldrynSitesTestCase(TestCase):
         url = yurl.URL(url)
         secure = (url.scheme == 'https')
         # Django < 1.7 does not have the `secure` parameter for the request
-        # factory methods. Manually set the requiresd kwargs here.
+        # factory methods. Manually set the required kwargs here instead.
         kwargs = {
             'SERVER_NAME': url.host,
             'SERVER_PORT': str('443') if secure else str('80'),
