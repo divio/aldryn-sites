@@ -57,7 +57,7 @@ def get_redirect_url(current_url, config, https=None):
         exact redirect match > exact alias match > pattern redirect match > pattern alias match
     :param current_url: the url that is being called
     :param config: redirect configuration for this url
-    :param want_https: whether redircts should go to https
+    :param want_https: whether redirects should go to https (None keeps the current scheme)
     :return: None for no redirect or an url to redirect to
     """
     primary_domain = config['domain']
@@ -78,7 +78,7 @@ def get_redirect_url(current_url, config, https=None):
         # exact host and scheme match: Nothing to do
         return
     if url.host in domains and url.scheme != target_scheme:
-        # exact alias match, but scheme mismatch: redirect to change scheme
+        # exact alias match, but scheme mismatch: redirect to changed scheme
         redirect_url = url.replace(scheme=target_scheme)
     elif url.host in redirect_domains:
         # exact redirect match: redirect

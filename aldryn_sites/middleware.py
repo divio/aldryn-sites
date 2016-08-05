@@ -7,12 +7,15 @@ from . import utils
 
 class SiteMiddleware(object):
     """
-    redirects any alias domains to the main domain.
-    Takes into account if SECURE_SSL_REDIRECT (from django-secure) is set and redirects directly to the
-    https version of the main domain if that is true.
+    Redirects any alias domains to the main domain.
 
-    This middleware must be BEFORE djangosecure.middleware.SecurityMiddleware in MIDDLEWARE_CLASSES, so it can
-    prevent the redirect from an alias domain to it's https version by djangosecure.middleware.SecurityMiddleware,
+    Takes into account if SECURE_SSL_REDIRECT (from django-secure) is
+    set and redirects directly to the https version of the main domain
+    if that is true.
+
+    This middleware must be BEFORE djangosecure.middleware.SecurityMiddleware
+    in MIDDLEWARE_CLASSES, so it can prevent the redirect from an alias
+    domain to it's https version by djangosecure.middleware.SecurityMiddleware,
     because you might only cover the main domain with the certificate.
     """
     def __init__(self):
@@ -25,13 +28,12 @@ class SiteMiddleware(object):
         if self.site_id not in self.domains.keys():
             return
 
-        current_url = '{}://{}{}'.format(
-            'https' if request.is_secure() else 'http',
-            request.get_host(),
-            request.get_full_path(),
-        )
+        current_url = request.build_absolute_uri()
         site_config = self.domains[self.site_id]
-        redirect_url = utils.get_redirect_url(current_url,
-                                              config=site_config, https=self.secure_redirect)
+        redirect_url = utils.get_redirect_url(
+            current_url,
+            config=site_config,
+            https=self.secure_redirect,
+        )
         if redirect_url:
             return HttpResponseRedirect(redirect_url)
