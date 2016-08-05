@@ -26,10 +26,17 @@ class AldrynSitesTestCase(TestCase):
 
     def request_from_url(self, url):
         url = yurl.URL(url)
+        secure = (url.scheme == 'https')
+        # Django < 1.7 does not have the `secure` parameter for the request
+        # factory methods. Manually set the requiresd kwargs here.
+        kwargs = {
+            'SERVER_NAME': url.host,
+            'SERVER_PORT': str('443') if secure else str('80'),
+            'wsgi.url_scheme': str('https') if secure else str('http'),
+        }
         return self.factory.get(
             url.full_path,
-            secure=(url.scheme == 'https'),
-            SERVER_NAME=url.host,
+            **kwargs
         )
 
     def assertUrlEquals(self, src, expected, got):
