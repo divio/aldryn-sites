@@ -1,3 +1,13 @@
+Changelog
+=========
+
+
+0.5.5 (2016-11-01)
+------------------
+
+* remove renaming of sites once site is created
+
+
 0.5.4 (2016-08-06)
 ------------------
 
