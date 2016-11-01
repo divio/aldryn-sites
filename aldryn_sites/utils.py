@@ -29,25 +29,10 @@ def set_site_names(force=False):
                 domain=config_domain,
             )
         else:
-            changed = False
             site = sites[site_id]
-            if not site.domain == config_domain:
+            if site.domain != config_domain:
                 # domain needs to be updated
-                if not config_name and site.name in (site.domain, 'example.com'):
-                    # ``site.name`` is not explicitly configured:
-                    # a) site.name == site.domain: since we change the domain,
-                    #    we should also change the name
-                    # b) site.name == example.com: fresh database with
-                    #    django's default for site name/domain, change it
-                    site.name = config_domain
                 site.domain = config_domain
-                changed = True
-            if config_name:
-                # a new site name has explicitly been set, update it
-                site.name = config_name
-                changed = True
-
-            if changed:
                 site.save()
 
 
