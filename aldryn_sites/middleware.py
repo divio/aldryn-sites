@@ -2,10 +2,16 @@
 from __future__ import unicode_literals, absolute_import
 from django.conf import settings
 from django.http import HttpResponseRedirect
+
+try:
+    from django.utils.deprecation import MiddlewareMixin
+except ImportError:
+    class MiddlewareMixin(object): pass  # NOQA
+
 from . import utils
 
 
-class SiteMiddleware(object):
+class SiteMiddleware(MiddlewareMixin):
     """
     Redirects any alias domains to the main domain.
 
@@ -18,11 +24,12 @@ class SiteMiddleware(object):
     domain to it's https version by djangosecure.middleware.SecurityMiddleware,
     because you might only cover the main domain with the certificate.
     """
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.domains = settings.ALDRYN_SITES_DOMAINS
         self.secure_redirect = getattr(settings, 'SECURE_SSL_REDIRECT', None)
         self.site_id = getattr(settings, 'SITE_ID', 1)
         utils.set_site_names()
+        super(SiteMiddleware, self).__init__(*args, **kwargs)
 
     def process_request(self, request):
         if self.site_id not in self.domains.keys():
