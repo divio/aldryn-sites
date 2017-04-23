@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+0.5.7 (2017-04-23)
+------------------
+
+* Added Django 1.11 support
+* Added Python3 and Django 1.11 to the test matrix
+
+
 0.5.6 (2017-02-28)
 ------------------
 
