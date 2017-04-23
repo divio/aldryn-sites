@@ -26,6 +26,9 @@ HELPER_SETTINGS = {
             ],
         }
     },
+    'ALLOWED_HOSTS': [
+        '*',
+    ],
 }
 
 
