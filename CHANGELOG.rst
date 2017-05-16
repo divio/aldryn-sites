@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+0.5.7 (2017-05-16)
+------------------
+
+* Added `ALDRYN_SITES_REDIRECT_PERMANENT` setting to change redirect type.
+
+
 0.5.6 (2017-02-28)
 ------------------
 
