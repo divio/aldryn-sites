@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 
 try:
     from django.utils.deprecation import MiddlewareMixin
@@ -42,5 +42,7 @@ class SiteMiddleware(MiddlewareMixin):
             config=site_config,
             https=self.secure_redirect,
         )
+
         if redirect_url:
-            return HttpResponseRedirect(redirect_url)
+            permanent = getattr(settings, 'ALDRYN_SITES_REDIRECT_PERMANENT', False)
+            return redirect(redirect_url, permanent=permanent)
