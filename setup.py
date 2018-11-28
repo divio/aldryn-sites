@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 import re
 
 module_file = open("aldryn_sites/__init__.py").read()
-metadata = dict(re.findall("__([a-z]+)__\s*=\s*'([^']+)'", module_file))
+metadata = dict(re.findall("__([a-z]+)__\s*=\s*'([^']+)'", module_file))  # noqa: W605
 
 setup(
     name='aldryn-sites',
@@ -20,7 +20,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=(
-        'Django>=1.5',
+        'Django>=1.11',
         'YURL>=0.13',
         'django-appconf',
     ),
@@ -30,8 +30,12 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 )

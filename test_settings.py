@@ -11,7 +11,7 @@ HELPER_SETTINGS = {
     'INSTALLED_APPS': [
         'aldryn_sites',
     ],
-    'MIDDLEWARE_CLASSES': [
+    'MIDDLEWARE': [
         'aldryn_sites.middleware.SiteMiddleware',
     ],
     'ALDRYN_SITES_DOMAINS': {

@@ -2,6 +2,15 @@ Changelog
 =========
 
 
+0.6.0 (unreleased)
+------------------
+
+* Added support for Django 2.0 and 2.1
+* Removed support for Django < 1.11
+* Adapted testing infrastructure (tox/travis) to incorporate
+  django CMS 3.5 and 3.6
+
+
 0.5.8 (2017-05-16)
 ------------------
 

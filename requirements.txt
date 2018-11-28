@@ -1,0 +1,4 @@
+pytz
+coverage
+djangocms-helper
+yurl
